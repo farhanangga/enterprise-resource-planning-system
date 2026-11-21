@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import heroImg from "@/public/assets/hero.png";
 import { hero } from "@/lib/content";
 import Navbar from "@/components/Navbar";
@@ -6,7 +7,7 @@ import Button from "@/components/ui/Button";
 import { Icon, type IconName } from "@/components/ui/Icon";
 import Reveal from "@/components/ui/Reveal";
 
-type Hero = {
+type HeroData = {
   id: number;
   title: string[];
   description: string;
@@ -15,10 +16,10 @@ type Hero = {
 type ApiResponse = {
   success: boolean;
   message: string;
-  data: Hero;
+  data: HeroData;
 };
 
-async function getHero(): Promise<Hero> {
+async function getHero(): Promise<HeroData> {
   const apiUrl = process.env.API_URL || "http://localhost:3001";
   const apiKey = process.env.API_SECRET_KEY;
 
@@ -54,6 +55,12 @@ const card =
 
 const bars = [38, 55, 44, 70, 62, 86, 100];
 
+// Contoh angka — ganti dengan data asli perusahaan Anda
+const stats = [
+  { value: "1,200+", label: "companies using ETERA" },
+  { value: "2.5M+", label: "transactions processed" },
+  { value: "99.5%", label: "uptime" },
+];
 /** Kartu kecil melayang di dekat ilustrasi */
 function Chip({
   icon,
@@ -97,11 +104,11 @@ function Pill({ icon, label, className, delay }: { icon: IconName; label: string
 }
 
 export default async function Hero() {
-
   const heroApi = await getHero();
 
   return (
-    <header id="home" className="grid lg:min-h-[680px] lg:grid-cols-[3fr_2fr]">
+    // Satu latar putih untuk seluruh hero (kiri + kanan), supaya menyatu
+    <header id="home" className="relative grid overflow-hidden bg-white lg:h-[100svh] lg:max-h-[880px] lg:min-h-[600px] lg:grid-cols-[3fr_2fr]">
       <style>{`
         @keyframes etera-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
         @keyframes etera-spin{to{transform:rotate(360deg)}}
@@ -114,74 +121,103 @@ export default async function Hero() {
         @media (prefers-reduced-motion:reduce){.etera-float,.etera-spin,.etera-drift,.etera-grow{animation:none!important}}
       `}</style>
 
-      {/* Panel oranye (kiri) */}
-      <div className="flex flex-col rounded-br-[32px] bg-[#ff9d66] px-6 pb-14 pt-6 text-[#1f1218] sm:px-10 lg:mb-14 lg:rounded-br-[44px] lg:px-14 lg:pt-7">
-        <Navbar />
+      {/* ===== Latar bersama (melintasi kiri dan kanan) ===== */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(31,18,24,.06)_1px,transparent_1px),linear-gradient(90deg,rgba(31,18,24,.06)_1px,transparent_1px)] [background-size:44px_44px] [mask-image:radial-gradient(ellipse_85%_80%_at_72%_55%,black,transparent)]"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(rgba(255,157,102,.55)_1.6px,transparent_1.6px)] [background-size:22px_22px] [mask-image:radial-gradient(ellipse_40%_45%_at_80%_74%,black,transparent)]"
+      />
+      {/* pudar ke putih di dasar agar menyatu dengan section berikutnya */}
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-24 bg-gradient-to-t from-white to-transparent" />
 
-        <div className="my-auto py-14 lg:py-12">
-          {/* Hover: tiap huruf terangkat dan berubah putih */}
-          <h1
-            aria-label={heroApi.title.join(" ")}
-            className="text-[clamp(2.4rem,5.4vw,4.75rem)] font-black uppercase leading-[1.02] tracking-tight"
-          >
-            {heroApi.title.map((line, i) => (
-              <span key={line} aria-hidden className="-mt-[0.2em] block overflow-hidden pb-[0.04em] pt-[0.2em]">
-                <Reveal as="span" variant="mask" delay={200 + i * 130} duration={900} className="block">
-                  {line.split("").map((ch, j) =>
-                    ch === " " ? (
-                      <span key={j} className="inline-block w-[0.28em]" />
-                    ) : (
-                      <span
-                        key={j}
-                        className="inline-block cursor-default transition-all duration-300 ease-out hover:-translate-y-[0.12em] hover:scale-110 hover:text-white"
-                      >
-                        {ch}
-                      </span>
-                    ),
-                  )}
-                </Reveal>
-              </span>
-            ))}
-          </h1>
+      {/* ===== Panel oranye (kiri) ===== */}
+      <div className="relative z-10 flex flex-col overflow-hidden rounded-br-[32px] bg-[#ff9d66] px-6 pb-8 pt-6 text-[#1f1218] sm:px-10 lg:mb-10 lg:rounded-br-[44px] lg:px-14 lg:pt-7">
+        {/* dekorasi panel */}
+        <div aria-hidden className="pointer-events-none absolute -right-24 -top-28 h-80 w-80 rounded-full bg-white/15" />
+        <div aria-hidden className="pointer-events-none absolute -bottom-36 left-[28%] h-80 w-80 rounded-full bg-[#1f1218]/[0.06]" />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(rgba(31,18,24,.16)_1.5px,transparent_1.5px)] [background-size:22px_22px] [mask-image:linear-gradient(to_bottom_left,black,transparent_55%)]"
+        />
 
-          <Reveal delay={650}>
-            <p className="mt-6 max-w-[34rem] text-[15px] font-semibold leading-relaxed text-white sm:text-base">{heroApi.description}</p>
-          </Reveal>
+        <div className="relative z-10 flex flex-1 flex-col">
+          <Navbar />
 
-          <Reveal delay={800} className="mt-8">
-            <Button href={hero.cta.href} variant="mauve" size="lg" arrow>
-              {hero.cta.label}
-            </Button>
-          </Reveal>
+          <div className="my-auto py-8 lg:py-3">
+            {/* Hover: tiap huruf terangkat dan berubah putih */}
+            <h1
+              aria-label={heroApi.title.join(" ")}
+              className="text-[clamp(2.2rem,min(5.4vw,10vh),4.75rem)] font-black uppercase leading-[1.02] tracking-tight"
+            >
+              {heroApi.title.map((line, i) => (
+                <span key={line} aria-hidden className="-mt-[0.2em] block overflow-hidden pb-[0.04em] pt-[0.2em]">
+                  <Reveal as="span" variant="mask" delay={200 + i * 130} duration={900} className="block">
+                    {line.split("").map((ch, j) =>
+                      ch === " " ? (
+                        <span key={j} className="inline-block w-[0.28em]" />
+                      ) : (
+                        <span
+                          key={j}
+                          className="inline-block cursor-default transition-all duration-300 ease-out hover:-translate-y-[0.12em] hover:scale-110 hover:text-white"
+                        >
+                          {ch}
+                        </span>
+                      ),
+                    )}
+                  </Reveal>
+                </span>
+              ))}
+            </h1>
+
+            <Reveal delay={650}>
+              <p className="mt-4 max-w-[36rem] text-sm font-semibold leading-relaxed text-white lg:text-[15px]">{heroApi.description}</p>
+            </Reveal>
+
+            {/* CTA */}
+            <Reveal delay={800} className="mt-6 flex flex-wrap items-center gap-3 sm:gap-4">
+              <Button href={hero.cta.href} variant="mauve" size="lg" arrow>
+                {hero.cta.label}
+              </Button>
+              <Link
+                href="#about"
+                className="group relative isolate inline-flex items-center justify-center gap-2 overflow-hidden rounded-full px-8 py-4 text-base font-semibold text-[#1f1218] ring-2 ring-inset ring-[#1f1218] transition-[color,transform] duration-300 before:absolute before:inset-0 before:-z-10 before:translate-y-full before:rounded-full before:bg-[#1f1218] before:transition-transform before:duration-300 hover:-translate-y-0.5 hover:text-white hover:before:translate-y-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#1e7be0]"
+              >
+                See features
+              </Link>
+            </Reveal>
+            {/* angka ringkas */}
+            <Reveal delay={1000} className="mt-5 max-w-[34rem] lg:[@media(max-height:620px)]:hidden">
+              <dl className="grid grid-cols-3 divide-x divide-[#1f1218]/10 rounded-2xl bg-white py-3.5 shadow-[0_16px_32px_-14px_rgba(31,18,24,.45)] ring-1 ring-[#1f1218]/5">
+                {stats.map((s) => (
+                  <div key={s.label} className="px-3 text-center transition-transform duration-300 hover:-translate-y-0.5 sm:px-6">
+                    <dt className="text-xl font-black leading-none sm:text-2xl">{s.value}</dt>
+                    <dd className="mt-1 text-[11px] font-semibold text-[#5d4a52] sm:text-xs">{s.label}</dd>
+                  </div>
+                ))}
+              </dl>
+            </Reveal>
+          </div>
         </div>
       </div>
 
-      {/* Kolom putih (kanan) */}
-      <div className="relative flex flex-col items-center overflow-hidden bg-white px-6 pt-6 lg:px-10 lg:pt-7">
-        {/* ===== Lapisan latar ===== */}
-        {/* grid garis tipis + titik, memudar ke tepi */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(31,18,24,.06)_1px,transparent_1px),linear-gradient(90deg,rgba(31,18,24,.06)_1px,transparent_1px)] [background-size:44px_44px] [mask-image:radial-gradient(ellipse_90%_80%_at_50%_55%,black,transparent)]"
-        />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(rgba(255,157,102,.55)_1.6px,transparent_1.6px)] [background-size:22px_22px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_72%,black,transparent)]"
-        />
+      {/* ===== Kolom kanan (tanpa latar sendiri, memakai latar bersama) ===== */}
+      <div className="relative flex flex-col items-center px-6 pt-6 lg:px-10 lg:pt-7">
         {/* blur hangat */}
         <div aria-hidden className="etera-drift pointer-events-none absolute -right-24 top-[22%] h-72 w-72 rounded-full bg-[#ff9d66]/30 blur-3xl" />
-        <div aria-hidden className="pointer-events-none absolute -left-24 bottom-[8%] h-56 w-56 rounded-full bg-[#1f1218]/10 blur-3xl" />
         {/* busur sudut kanan-atas */}
         <div aria-hidden className="pointer-events-none absolute -right-14 -top-14 h-44 w-44 rounded-full border-[16px] border-[#ff9d66]/25" />
         {/* cincin konsentris di belakang arch */}
         <div aria-hidden className="pointer-events-none absolute inset-x-0 top-[66%] flex h-0 items-center justify-center">
-          <div className="etera-spin h-[460px] w-[460px] shrink-0 rounded-full border-2 border-dashed border-[#ff9d66]/60" />
+          <div className="etera-spin h-[min(520px,74vh)] w-[min(520px,74vh)] shrink-0 rounded-full border-2 border-dashed border-[#ff9d66]/60" />
         </div>
         <div aria-hidden className="pointer-events-none absolute inset-x-0 top-[66%] flex h-0 items-center justify-center">
-          <div className="h-[340px] w-[340px] shrink-0 rounded-full border border-[#1f1218]/10" />
+          <div className="h-[min(380px,56vh)] w-[min(380px,56vh)] shrink-0 rounded-full border border-[#1f1218]/10" />
         </div>
         <div aria-hidden className="pointer-events-none absolute inset-x-0 top-[66%] flex h-0 items-center justify-center">
-          <div className="h-[600px] w-[600px] shrink-0 rounded-full border border-[#ff9d66]/25" />
+          <div className="h-[min(660px,92vh)] w-[min(660px,92vh)] shrink-0 rounded-full border border-[#ff9d66]/25" />
         </div>
         {/* bentuk kecil */}
         <span aria-hidden className="etera-float pointer-events-none absolute bottom-[12%] left-[7%] h-14 w-14 rotate-12 rounded-2xl border-2 border-[#ff9d66]/70" />
@@ -228,7 +264,7 @@ export default async function Hero() {
           </div>
         </div>
 
-        <Reveal variant="rise" duration={1100} delay={450} className="group relative z-10 mt-12 w-[72%] max-w-[440px] lg:mt-auto">
+        <Reveal variant="rise" duration={1100} delay={450} className="group relative z-10 mt-12 w-[min(80%,480px)] lg:mt-auto lg:w-[min(86%,560px,56vh)]">
           {/* Div coklat (arch) di belakang hero.png */}
           <div
             aria-hidden
@@ -238,7 +274,7 @@ export default async function Hero() {
             src={heroImg}
             alt="Business owner using a tablet to manage the company with ETERA"
             priority
-            sizes="(min-width: 1024px) 440px, 72vw"
+            sizes="(min-width: 1024px) 560px, 80vw"
             className="relative z-10 h-auto w-full origin-bottom transition-transform duration-700 ease-out group-hover:scale-[1.03]"
           />
 
