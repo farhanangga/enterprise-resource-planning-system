@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import Hero from "@/components/sections/Hero";
 import About from "@/components/sections/About";
 import Steps from "@/components/sections/Steps";
@@ -17,7 +18,9 @@ export default function LandingPage() {
   return (
     <div className="overflow-x-clip bg-white font-sans text-[#1f1218]">
       <main>
-        <Hero />
+        <Suspense fallback={<div>Loading hero...</div>}>
+          <Hero />
+        </Suspense>
         <About />
         <Steps />
         <Pricing />

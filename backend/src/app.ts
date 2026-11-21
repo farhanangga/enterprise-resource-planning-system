@@ -2,6 +2,7 @@
 import express from "express";
 import cors from "cors";
 import userRoutes from "./routes/userRoutes";
+import heroRoutes from "./routes/heroRoutes";
 import apiKeyMiddleware from "./middlewares/apiKeyMiddleware";
 
 
@@ -21,4 +22,5 @@ app.get("/", (req, res) => {
 // Export app
 app.use("/api",apiKeyMiddleware);
 app.use("/api/users", userRoutes);
+app.use("/api/hero", heroRoutes);
 export default app;

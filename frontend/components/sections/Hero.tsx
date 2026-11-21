@@ -6,6 +6,47 @@ import Button from "@/components/ui/Button";
 import { Icon, type IconName } from "@/components/ui/Icon";
 import Reveal from "@/components/ui/Reveal";
 
+type Hero = {
+  id: number;
+  title: string[];
+  description: string;
+};
+
+type ApiResponse = {
+  success: boolean;
+  message: string;
+  data: Hero;
+};
+
+async function getHero(): Promise<Hero> {
+  const apiUrl = process.env.API_URL || "http://localhost:3001";
+  const apiKey = process.env.API_SECRET_KEY;
+
+  if (!apiKey) {
+    throw new Error("API_SECRET_KEY is not configured");
+  }
+
+  const response = await fetch(`${apiUrl}/api/hero`, {
+    method: "GET",
+    headers: {
+      "x-api-key": apiKey,
+    },
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch hero: ${response.status}`);
+  }
+
+  const result: ApiResponse = await response.json();
+
+  if (!result.success) {
+    throw new Error(result.message);
+  }
+
+  return result.data;
+}
+
 // Elemen tambahan hanya tampil saat kolom kanan cukup lebar (tablet, dan layar >= 1280px)
 const extras = "hidden md:block lg:hidden xl:block";
 const card =
@@ -55,7 +96,10 @@ function Pill({ icon, label, className, delay }: { icon: IconName; label: string
   );
 }
 
-export default function Hero() {
+export default async function Hero() {
+
+  const heroApi = await getHero();
+
   return (
     <header id="home" className="grid lg:min-h-[680px] lg:grid-cols-[3fr_2fr]">
       <style>{`
@@ -77,10 +121,10 @@ export default function Hero() {
         <div className="my-auto py-14 lg:py-12">
           {/* Hover: tiap huruf terangkat dan berubah putih */}
           <h1
-            aria-label={hero.lines.join(" ")}
+            aria-label={heroApi.title.join(" ")}
             className="text-[clamp(2.4rem,5.4vw,4.75rem)] font-black uppercase leading-[1.02] tracking-tight"
           >
-            {hero.lines.map((line, i) => (
+            {heroApi.title.map((line, i) => (
               <span key={line} aria-hidden className="-mt-[0.2em] block overflow-hidden pb-[0.04em] pt-[0.2em]">
                 <Reveal as="span" variant="mask" delay={200 + i * 130} duration={900} className="block">
                   {line.split("").map((ch, j) =>
@@ -101,7 +145,7 @@ export default function Hero() {
           </h1>
 
           <Reveal delay={650}>
-            <p className="mt-6 max-w-[34rem] text-[15px] font-semibold leading-relaxed text-white sm:text-base">{hero.text}</p>
+            <p className="mt-6 max-w-[34rem] text-[15px] font-semibold leading-relaxed text-white sm:text-base">{heroApi.description}</p>
           </Reveal>
 
           <Reveal delay={800} className="mt-8">
