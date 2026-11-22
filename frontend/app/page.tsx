@@ -7,6 +7,8 @@ import Pricing from "@/components/sections/Pricing";
 import Faq from "@/components/sections/Faq";
 import Cta from "@/components/sections/Cta";
 import Footer from "@/components/sections/Footer";
+import PricingFaq from "@/components/sections/pricingFaq";
+
 
 export const metadata: Metadata = {
   title: "ETERA – Manage your company more easily",
@@ -23,9 +25,7 @@ export default function LandingPage() {
         </Suspense>
         <About />
         <Steps />
-        <Pricing />
-        <Faq />
-        <Cta />
+        <PricingFaq />
       </main>
       <Footer />
     </div>
