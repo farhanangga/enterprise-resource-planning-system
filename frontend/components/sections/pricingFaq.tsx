@@ -8,7 +8,7 @@ import Reveal from "@/components/ui/Reveal";
 import { Container, SectionHeading } from "@/components/ui/Section";
 
 /* ===== Data statis CTA ===== */
-const cta = { label: "Start Now", href: "/signup" };
+const cta = { label: "Start Now", href: "/auth/signUp" };
 
 /* ===== Warna kartu pricing: putih (Starter), oranye (Business), coklat (Enterprise) ===== */
 const tones = {

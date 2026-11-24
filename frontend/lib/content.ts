@@ -19,7 +19,7 @@ export const footerLinks = [
 export const hero = {
   lines: ["Manage your", "company more", "easily"],
   text: "Unifying finance, HR, inventory, sales, and operations in one platform. Faster decisions, streamlined processes, and a more growth-ready business.",
-  cta: { label: "Start Now", href: "/signup" },
+  cta: { label: "Start Now", href: "/auth/signUp" },
 };
 
 export const features: { icon: IconName; title: string; text: string }[] = [
@@ -45,7 +45,7 @@ export const plans = [
     text: "For small shops getting organized.",
     items: ["1 company, 3 users", "Inventory and sales", "Basic reports"],
     cta: "Start free",
-    href: "/signup",
+    href: "/auth/signUp",
     tone: "white" as const,
   },
   {
@@ -55,7 +55,7 @@ export const plans = [
     text: "For growing teams.",
     items: ["Unlimited users", "Finance, HR, and purchasing", "Roles and audit log"],
     cta: "Choose Business",
-    href: "/signup",
+    href: "/auth/signUp",
     tone: "orange" as const,
   },
   {

@@ -58,12 +58,12 @@ export default function Footer() {
             <p className={heading}>Account</p>
             <ul className="mt-4 grid gap-3">
               <li>
-                <Link href="/signin" className={link}>
+                <Link href="/auth/signIn" className={link}>
                   Sign In
                 </Link>
               </li>
               <li>
-                <Link href="/signup" className={link}>
+                <Link href="/auth/signUp" className={link}>
                   Sign Up
                 </Link>
               </li>

@@ -47,7 +47,7 @@ async function getHero(): Promise<HeroData> {
 }
 
 /* ===== Data statis ===== */
-const cta = { label: "Start Now", href: "/signup" };
+const cta = { label: "Start Now", href: "/auth/signUp" };
 
 const card =
   "bg-white shadow-[0_18px_40px_-18px_rgba(31,18,24,.35)] ring-1 ring-[#1f1218]/5 transition-transform duration-300 hover:scale-105";
@@ -293,10 +293,10 @@ export default async function Hero() {
 
         {/* ===== Tombol auth: 2 kolom sama lebar di mobile ===== */}
         <Reveal variant="down" delay={300} className="relative z-10 grid w-full max-w-[34rem] grid-cols-2 gap-3 sm:flex sm:w-auto sm:max-w-none sm:justify-center sm:gap-4">
-          <Link href="/signup" className={btnOrange}>
+          <Link href="/auth/signUp" className={btnOrange}>
             Sign Up
           </Link>
-          <Link href="/signin" className={btnDark}>
+          <Link href="/auth/signIn" className={btnDark}>
             Sign In
           </Link>
         </Reveal>

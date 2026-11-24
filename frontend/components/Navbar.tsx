@@ -177,7 +177,7 @@ export default function Navbar() {
               {/* Sign Up dan Sign In hanya ada di sini pada mobile */}
               <div className="mt-auto grid grid-cols-2 gap-3 pt-8">
                 <Link
-                  href="/signup"
+                  href="/auth/signUp"
                   onClick={() => setFloatOpen(false)}
                   tabIndex={floatOpen ? 0 : -1}
                   className={`${floatSignUp} ${inMenu} !h-12`}
@@ -185,7 +185,7 @@ export default function Navbar() {
                   Sign Up
                 </Link>
                 <Link
-                  href="/signin"
+                  href="/auth/signIn"
                   onClick={() => setFloatOpen(false)}
                   tabIndex={floatOpen ? 0 : -1}
                   className={`${floatSignIn} ${inMenu} !h-12`}
@@ -235,10 +235,10 @@ export default function Navbar() {
 
                 {/* Kanan: desktop = Sign Up + Sign In, mobile = hanya hamburger */}
                 <div className="flex items-center gap-2 justify-self-end sm:gap-3">
-                  <Link href="/signup" className={`${floatSignUp} ${barOnly}`}>
+                  <Link href="/auth/signUp" className={`${floatSignUp} ${barOnly}`}>
                     Sign Up
                   </Link>
-                  <Link href="/signin" className={`${floatSignIn} ${barOnly}`}>
+                  <Link href="/auth/signIn" className={`${floatSignIn} ${barOnly}`}>
                     Sign In
                   </Link>
                   <button
