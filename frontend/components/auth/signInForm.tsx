@@ -274,7 +274,7 @@ export default function SignInForm({ accounts, copy, redirectTo = "/dashboard", 
               <button
                 type="submit"
                 disabled={locked || busy}
-                className="group relative isolate flex w-full items-center justify-center gap-2 overflow-hidden rounded-full bg-[#1f1218] px-8 py-4 text-base font-semibold text-white shadow-sm transition-[color,transform,box-shadow] duration-300 before:absolute before:inset-0 before:-z-10 before:translate-y-full before:rounded-full before:bg-[#ff9d66] before:transition-transform before:duration-300 hover:-translate-y-0.5 hover:text-[#1f1218] hover:shadow-lg hover:before:translate-y-0 disabled:pointer-events-none disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#1e7be0]"
+                className="flex w-full items-center justify-center gap-2 rounded-full bg-[#1f1218] px-8 py-4 text-base font-semibold text-white transition-colors duration-200 hover:bg-[#ff9d66] hover:text-[#1f1218] disabled:pointer-events-none disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#1e7be0]"
               >
                 {status === "loading" ? (
                   <>
@@ -289,7 +289,7 @@ export default function SignInForm({ accounts, copy, redirectTo = "/dashboard", 
                 ) : (
                   <>
                     Sign in
-                    <Icon name="arrow" className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                    <Icon name="arrow" className="h-4 w-4" />
                   </>
                 )}
               </button>
@@ -308,7 +308,7 @@ export default function SignInForm({ accounts, copy, redirectTo = "/dashboard", 
                 <button
                   type="button"
                   onClick={fillDemo}
-                  className="shrink-0 rounded-full bg-[#1f1218] px-4 py-2 text-xs font-semibold text-white transition hover:-translate-y-0.5 hover:bg-[#ff9d66] hover:text-[#1f1218]"
+                  className="shrink-0 rounded-full bg-[#1f1218] px-4 py-2 text-xs font-semibold text-white transition-colors duration-200 hover:bg-[#ff9d66] hover:text-[#1f1218]"
                 >
                   Autofill
                 </button>
@@ -319,7 +319,7 @@ export default function SignInForm({ accounts, copy, redirectTo = "/dashboard", 
           <Reveal delay={400}>
             <p className="mt-7 text-center text-sm text-[#5d4a52]">
               Don’t have an account?{" "}
-              <Link href="/auth/signUp" className="font-bold text-[#1f1218] underline decoration-[#ff9d66] decoration-2 underline-offset-4 hover:text-[#e8641f]">
+              <Link href="/signup" className="font-bold text-[#1f1218] underline decoration-[#ff9d66] decoration-2 underline-offset-4 hover:text-[#e8641f]">
                 Sign up
               </Link>
             </p>

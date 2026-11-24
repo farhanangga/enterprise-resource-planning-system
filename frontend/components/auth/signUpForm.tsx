@@ -243,10 +243,10 @@ export default function SignUpForm({ existingEmails, industries, copy, redirectT
                 <button
                   type="button"
                   onClick={() => router.push(redirectTo)}
-                  className="group relative isolate mt-6 flex w-full items-center justify-center gap-2 overflow-hidden rounded-full bg-[#1f1218] px-8 py-4 text-base font-semibold text-white transition-[color,transform] duration-300 before:absolute before:inset-0 before:-z-10 before:translate-y-full before:rounded-full before:bg-[#ff9d66] before:transition-transform before:duration-300 hover:-translate-y-0.5 hover:text-[#1f1218] hover:before:translate-y-0"
+                  className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-[#1f1218] px-8 py-4 text-base font-semibold text-white transition-colors duration-200 hover:bg-[#ff9d66] hover:text-[#1f1218]"
                 >
                   Go to dashboard
-                  <Icon name="arrow" className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                  <Icon name="arrow" className="h-4 w-4" />
                 </button>
               </div>
             </Reveal>
@@ -412,7 +412,7 @@ export default function SignUpForm({ existingEmails, industries, copy, redirectT
                   <button
                     type="submit"
                     disabled={busy}
-                    className="group relative isolate mt-1 flex w-full items-center justify-center gap-2 overflow-hidden rounded-full bg-[#1f1218] px-8 py-4 text-base font-semibold text-white shadow-sm transition-[color,transform,box-shadow] duration-300 before:absolute before:inset-0 before:-z-10 before:translate-y-full before:rounded-full before:bg-[#ff9d66] before:transition-transform before:duration-300 hover:-translate-y-0.5 hover:text-[#1f1218] hover:shadow-lg hover:before:translate-y-0 disabled:pointer-events-none disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#1e7be0]"
+                    className="mt-1 flex w-full items-center justify-center gap-2 rounded-full bg-[#1f1218] px-8 py-4 text-base font-semibold text-white transition-colors duration-200 hover:bg-[#ff9d66] hover:text-[#1f1218] disabled:pointer-events-none disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#1e7be0]"
                   >
                     {status === "loading" ? (
                       <>
@@ -422,7 +422,7 @@ export default function SignUpForm({ existingEmails, industries, copy, redirectT
                     ) : (
                       <>
                         Create account
-                        <Icon name="arrow" className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                        <Icon name="arrow" className="h-4 w-4" />
                       </>
                     )}
                   </button>
@@ -430,9 +430,9 @@ export default function SignUpForm({ existingEmails, industries, copy, redirectT
               </Reveal>
 
               <Reveal delay={300}>
-                <p className="mt-6 text-center text-sm text-[#5d4a52]">
+                <p className="mt-7 text-center text-sm text-[#5d4a52]">
                   Already have an account?{" "}
-                  <Link href="/auth/signIn" className="font-bold text-[#1f1218] underline decoration-[#ff9d66] decoration-2 underline-offset-4 hover:text-[#e8641f]">
+                  <Link href="/signin" className="font-bold text-[#1f1218] underline decoration-[#ff9d66] decoration-2 underline-offset-4 hover:text-[#e8641f]">
                     Sign in
                   </Link>
                 </p>
