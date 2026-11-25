@@ -1,9 +1,51 @@
-import { features } from "@/lib/content";
-import { Icon } from "@/components/ui/Icon";
+import { Icon, type IconName } from "@/components/ui/Icon";
 import Reveal from "@/components/ui/Reveal";
 import { Container, SectionHeading } from "@/components/ui/Section";
 
-export default function About() {
+type AboutItem = {
+  icon: IconName;
+  title: string;
+  text: string;
+};
+
+type ApiResponse = {
+  success: boolean;
+  message: string;
+  data: AboutItem[];
+};
+
+async function getAbout(): Promise<AboutItem[]> {
+  const apiUrl = process.env.API_URL || "http://localhost:3001";
+  const apiKey = process.env.API_SECRET_KEY;
+
+  if (!apiKey) {
+    throw new Error("API_SECRET_KEY is not configured");
+  }
+
+  const response = await fetch(`${apiUrl}/api/about`, {
+    method: "GET",
+    headers: {
+      "x-api-key": apiKey,
+    },
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch about: ${response.status}`);
+  }
+
+  const result: ApiResponse = await response.json();
+
+  if (!result.success) {
+    throw new Error(result.message);
+  }
+
+  return result.data;
+}
+
+export default async function About() {
+  const items = await getAbout();
+
   return (
     <section id="about" className="relative overflow-hidden bg-white px-6 py-20 text-[#1f1218] sm:px-10 lg:px-14 lg:py-28">
       {/* ===== Latar: grid garis kotak ===== */}
@@ -21,7 +63,7 @@ export default function About() {
           lead="ETERA brings your daily operations into one workspace, so finance, HR, warehouse, and sales always work from the same numbers."
         />
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {features.map((f, i) => (
+          {items.map((f, i) => (
             <Reveal key={f.title} delay={(i % 3) * 120} className="h-full">
               <article className="group relative h-full overflow-hidden rounded-[28px] border border-[#1f1218]/10 bg-[#ff9d66] p-7 text-[#1f1218] shadow-[0_18px_36px_-20px_rgba(255,157,102,.9)] transition-all duration-300 hover:-translate-y-2 hover:border-[#1f1218] hover:bg-[#1f1218] hover:text-white hover:shadow-[0_24px_40px_-20px_rgba(31,18,24,.75)]">
                 <div className="grid h-12 w-12 place-items-center rounded-2xl bg-[#1f1218] text-[#ff9d66] transition-all duration-300 group-hover:rotate-6 group-hover:scale-110 group-hover:bg-[#ff9d66] group-hover:text-[#1f1218]">
