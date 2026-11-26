@@ -1,3 +1,4 @@
+import { Suspense, cache } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import heroImg from "@/public/assets/hero.png";
@@ -17,7 +18,11 @@ type ApiResponse = {
   data: HeroData;
 };
 
-async function getHero(): Promise<HeroData> {
+/**
+ * Dibungkus cache() supaya kalau dipanggil lebih dari sekali
+ * dalam satu render, request ke API tetap hanya sekali.
+ */
+const getHero = cache(async (): Promise<HeroData> => {
   const apiUrl = process.env.API_URL || "http://localhost:3001";
   const apiKey = process.env.API_SECRET_KEY;
 
@@ -44,7 +49,7 @@ async function getHero(): Promise<HeroData> {
   }
 
   return result.data;
-}
+});
 
 /* ===== Data statis ===== */
 const cta = { label: "Start Now", href: "/auth/signUp" };
@@ -76,6 +81,11 @@ const btnOrange = `${btnBase} bg-[#ff9d66] text-[#1f1218] shadow-[0_10px_24px_-1
 
 // Sign In (coklat gelap) -> hover oranye
 const btnDark = `${btnBase} bg-[#1f1218] text-white shadow-[0_10px_24px_-8px_rgba(31,18,24,.65)] hover:bg-[#ff9d66] hover:text-[#1f1218] hover:shadow-[0_16px_30px_-10px_rgba(255,157,102,.9)]`;
+
+// Ukuran font judul dipakai bersama oleh h1 asli dan skeleton-nya
+// supaya tinggi keduanya sama dan layout tidak melompat.
+const titleSize =
+  "text-[clamp(2.2rem,min(5.4vw,10vh),4.75rem)] font-black uppercase leading-[1.02] tracking-tight";
 
 function Arrow() {
   return (
@@ -170,9 +180,85 @@ function RevenueCard({ className = "" }: { className?: string }) {
   );
 }
 
-export default async function Hero() {
+/* =====================================================================
+ *  BAGIAN DINAMIS (butuh data API) — di-stream lewat <Suspense>
+ * ===================================================================== */
+
+/** Judul + deskripsi. Async server component: inilah yang "menunggu" API. */
+async function HeroCopy() {
   const heroApi = await getHero();
 
+  return (
+    <>
+      {/* Hover: tiap huruf terangkat dan berubah putih */}
+      <h1 aria-label={heroApi.title.join(" ")} className={titleSize}>
+        {heroApi.title.map((line, i) => (
+          <span key={line} aria-hidden className="-mt-[0.2em] block overflow-hidden pb-[0.04em] pt-[0.2em]">
+            <Reveal as="span" variant="mask" delay={100 + i * 130} duration={900} className="block">
+              {line.split("").map((ch, j) =>
+                ch === " " ? (
+                  <span key={j} className="inline-block w-[0.28em]" />
+                ) : (
+                  <span
+                    key={j}
+                    className="inline-block cursor-default transition-all duration-300 ease-out hover:-translate-y-[0.12em] hover:scale-110 hover:text-white"
+                  >
+                    {ch}
+                  </span>
+                ),
+              )}
+            </Reveal>
+          </span>
+        ))}
+      </h1>
+
+      <Reveal delay={450}>
+        <p className="mt-4 max-w-[36rem] text-sm font-semibold leading-relaxed text-white sm:text-base lg:text-[15px]">
+          {heroApi.description}
+        </p>
+      </Reveal>
+    </>
+  );
+}
+
+/** Skeleton yang ukurannya meniru judul + deskripsi asli. */
+function HeroCopySkeleton() {
+  const titleLines = ["w-[88%]", "w-[64%]", "w-[76%]"];
+  const descLines = ["w-full", "w-[92%]", "w-[60%]"];
+
+  return (
+    <div role="status" aria-live="polite" aria-busy="true">
+      <span className="sr-only">Loading…</span>
+
+      <div aria-hidden className={titleSize}>
+        {titleLines.map((w, i) => (
+          <span key={i} className="-mt-[0.2em] block pb-[0.04em] pt-[0.2em]">
+            <span
+              className={`block h-[0.82em] animate-pulse rounded-xl bg-[#1f1218]/15 ${w}`}
+              style={{ animationDelay: `${i * 120}ms` }}
+            />
+          </span>
+        ))}
+      </div>
+
+      <div aria-hidden className="mt-4 max-w-[36rem] space-y-2.5">
+        {descLines.map((w, i) => (
+          <span
+            key={i}
+            className={`block h-3.5 animate-pulse rounded-full bg-white/50 sm:h-4 lg:h-[15px] ${w}`}
+            style={{ animationDelay: `${300 + i * 120}ms` }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* =====================================================================
+ *  HERO — sekarang BUKAN async, jadi kerangka halaman langsung tampil
+ * ===================================================================== */
+
+export default function Hero() {
   return (
     // Satu latar putih untuk seluruh hero (kiri + kanan), supaya menyatu
     <header id="home" className="relative grid overflow-hidden bg-white lg:h-[100svh] lg:max-h-[880px] lg:min-h-[600px] lg:grid-cols-[3fr_2fr]">
@@ -219,37 +305,13 @@ export default async function Hero() {
           <Navbar />
 
           <div className="my-auto pt-8 lg:py-3">
-            {/* Hover: tiap huruf terangkat dan berubah putih */}
-            <h1
-              aria-label={heroApi.title.join(" ")}
-              className="text-[clamp(2.2rem,min(5.4vw,10vh),4.75rem)] font-black uppercase leading-[1.02] tracking-tight"
-            >
-              {heroApi.title.map((line, i) => (
-                <span key={line} aria-hidden className="-mt-[0.2em] block overflow-hidden pb-[0.04em] pt-[0.2em]">
-                  <Reveal as="span" variant="mask" delay={200 + i * 130} duration={900} className="block">
-                    {line.split("").map((ch, j) =>
-                      ch === " " ? (
-                        <span key={j} className="inline-block w-[0.28em]" />
-                      ) : (
-                        <span
-                          key={j}
-                          className="inline-block cursor-default transition-all duration-300 ease-out hover:-translate-y-[0.12em] hover:scale-110 hover:text-white"
-                        >
-                          {ch}
-                        </span>
-                      ),
-                    )}
-                  </Reveal>
-                </span>
-              ))}
-            </h1>
-
-            <Reveal delay={650}>
-              <p className="mt-4 max-w-[36rem] text-sm font-semibold leading-relaxed text-white sm:text-base lg:text-[15px]">{heroApi.description}</p>
-            </Reveal>
+            {/* Hanya judul + deskripsi yang menunggu API */}
+            <Suspense fallback={<HeroCopySkeleton />}>
+              <HeroCopy />
+            </Suspense>
 
             {/* CTA: 2 kolom sama lebar di mobile, berdampingan di layar lebih besar */}
-            <Reveal delay={800} className="mt-6 grid max-w-[34rem] grid-cols-2 gap-3 sm:flex sm:flex-wrap sm:items-center sm:gap-4">
+            <Reveal delay={600} className="mt-6 grid max-w-[34rem] grid-cols-2 gap-3 sm:flex sm:flex-wrap sm:items-center sm:gap-4">
               <Link href={cta.href} className={btnBrown}>
                 {cta.label}
                 <Arrow />
@@ -260,7 +322,7 @@ export default async function Hero() {
             </Reveal>
 
             {/* statistik */}
-            <Reveal delay={1000} className="mt-6 max-w-[36rem] lg:[@media(max-height:620px)]:hidden">
+            <Reveal delay={800} className="mt-6 max-w-[36rem] lg:[@media(max-height:620px)]:hidden">
               <dl className="grid grid-cols-3 divide-x divide-[#1f1218]/10 rounded-2xl bg-white py-4 shadow-[0_16px_32px_-14px_rgba(31,18,24,.45)] ring-1 ring-[#1f1218]/5 sm:py-5">
                 {stats.map((s) => (
                   <div key={s.label} className="px-2 text-center transition-transform duration-300 hover:-translate-y-0.5 sm:px-5">

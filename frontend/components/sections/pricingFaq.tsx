@@ -1,11 +1,68 @@
-"use client";
-
-import { useState } from "react";
+import { Suspense, cache } from "react";
 import Link from "next/link";
-import { plans, faqs } from "@/lib/content";
 import { Icon } from "@/components/ui/Icon";
 import Reveal from "@/components/ui/Reveal";
 import { Container, SectionHeading } from "@/components/ui/Section";
+
+/* ===== Types ===== */
+type PlanTone = "white" | "orange" | "brown";
+
+type PlanItem = {
+  name: string;
+  price: string;
+  suffix: string;
+  text: string;
+  items: string[];
+  cta: string;
+  href: string;
+  tone: PlanTone;
+};
+
+type FaqItem = {
+  q: string;
+  a: string;
+};
+
+type PricingFaqData = {
+  plans: PlanItem[];
+  faqs: FaqItem[];
+};
+
+type ApiResponse = {
+  success: boolean;
+  message: string;
+  data: PricingFaqData;
+};
+
+/* ===== Satu jalur API (di-cache, hanya 1 request per render) ===== */
+const getPricingFaq = cache(async (): Promise<PricingFaqData> => {
+  const apiUrl = process.env.API_URL || "http://localhost:3001";
+  const apiKey = process.env.API_SECRET_KEY;
+
+  if (!apiKey) {
+    throw new Error("API_SECRET_KEY is not configured");
+  }
+
+  const response = await fetch(`${apiUrl}/api/pricingFaq`, {
+    method: "GET",
+    headers: {
+      "x-api-key": apiKey,
+    },
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch pricing-faq: ${response.status}`);
+  }
+
+  const result: ApiResponse = await response.json();
+
+  if (!result.success) {
+    throw new Error(result.message);
+  }
+
+  return result.data;
+});
 
 /* ===== Data statis CTA ===== */
 const cta = { label: "Start Now", href: "/auth/signUp" };
@@ -36,6 +93,9 @@ const tones = {
 const btnBase =
   "group inline-flex h-12 items-center justify-center gap-2 rounded-full px-6 text-sm font-semibold transition-all duration-300 ease-out active:scale-[0.97] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#1f1218] sm:h-14 sm:px-8 sm:text-base";
 
+/* Class dipakai bersama oleh konten asli dan skeleton */
+const plansGrid = "grid items-stretch gap-5 md:grid-cols-3 md:gap-6";
+
 function Arrow() {
   return (
     <svg
@@ -54,9 +114,163 @@ function Arrow() {
   );
 }
 
-export default function PricingFaq() {
-  const [open, setOpen] = useState<number | null>(0);
+/* =====================================================================
+ *  BAGIAN DINAMIS (butuh data API) — di-stream lewat <Suspense>
+ * ===================================================================== */
 
+async function PlansGrid() {
+  const { plans } = await getPricingFaq();
+
+  return (
+    <div className={plansGrid}>
+      {plans.map((p, i) => {
+        const t = tones[p.tone] ?? tones.white;
+        const featured = p.tone === "orange";
+        return (
+          <Reveal key={p.name} delay={i * 130} className="h-full">
+            <article
+              className={`relative flex h-full flex-col rounded-[28px] border p-7 transition-all duration-300 hover:-translate-y-2 sm:p-8 ${
+                featured ? "md:py-10" : ""
+              } ${t.card}`}
+            >
+              <div className="flex min-h-[1.75rem] items-center justify-between gap-3">
+                <h3 className="text-lg font-bold">{p.name}</h3>
+                {featured && (
+                  <span className="shrink-0 rounded-full bg-[#1f1218] px-3 py-1 text-xs font-semibold text-white">
+                    Most popular
+                  </span>
+                )}
+              </div>
+
+              <div className="mt-4 flex items-baseline gap-1">
+                <span className="text-4xl font-black tracking-tight sm:text-5xl">{p.price}</span>
+                {p.suffix && <span className={`text-sm font-semibold ${t.muted}`}>{p.suffix}</span>}
+              </div>
+              <p className={`mt-2 text-[15px] ${t.muted}`}>{p.text}</p>
+
+              <div className="my-6 h-px w-full bg-current opacity-10" />
+
+              <ul className="grid gap-3.5 text-[15px]">
+                {p.items.map((item) => (
+                  <li key={item} className="flex items-start gap-3">
+                    <span className={`mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full ${t.check}`}>
+                      <Icon name="check" className="h-3 w-3" />
+                    </span>
+                    <span className="leading-snug">{item}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <div className="mt-auto pt-8">
+                <Link href={p.href} className={`${btnBase} w-full ${t.button}`}>
+                  {p.cta}
+                </Link>
+              </div>
+            </article>
+          </Reveal>
+        );
+      })}
+    </div>
+  );
+}
+
+/**
+ * FAQ memakai <details name="faq"> (accordion native, eksklusif: hanya 1 terbuka).
+ * Tidak butuh useState, jadi halaman tetap server component.
+ */
+async function FaqList() {
+  const { faqs } = await getPricingFaq();
+
+  return (
+    <div className="grid gap-3">
+      {faqs.map((f, i) => (
+        <Reveal key={f.q} delay={i * 90}>
+          <details
+            name="faq"
+            open={i === 0}
+            className="group/faq overflow-hidden rounded-[24px] border border-[#1f1218]/10 bg-[#ff9d66] text-[#1f1218] shadow-[0_18px_36px_-22px_rgba(255,157,102,.9)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[#1f1218] hover:bg-[#1f1218] hover:text-white open:border-[#1f1218] open:bg-[#1f1218] open:text-white open:shadow-[0_24px_40px_-22px_rgba(31,18,24,.7)]"
+          >
+            <summary className="flex w-full cursor-pointer list-none items-center justify-between gap-4 px-6 py-5 text-left text-base font-bold focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-[#ff9d66] sm:text-lg [&::-webkit-details-marker]:hidden">
+              <span>{f.q}</span>
+              <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-[#1f1218] text-[#ff9d66] transition-all duration-300 group-hover/faq:scale-110 group-hover/faq:bg-[#ff9d66] group-hover/faq:text-[#1f1218] group-open/faq:rotate-45 group-open/faq:bg-[#ff9d66] group-open/faq:text-[#1f1218]">
+                <Icon name="plus" className="h-4 w-4" />
+              </span>
+            </summary>
+            <p className="max-w-[42rem] px-6 pb-6 leading-relaxed text-[#e3cdd4]">{f.a}</p>
+          </details>
+        </Reveal>
+      ))}
+    </div>
+  );
+}
+
+/* ===== Skeleton ===== */
+
+function PlanCardSkeleton({ index }: { index: number }) {
+  const featured = index === 1;
+  return (
+    <div
+      className={`flex h-full animate-pulse flex-col rounded-[28px] border border-[#1f1218]/10 bg-[#1f1218]/5 p-7 sm:p-8 ${
+        featured ? "md:py-10" : ""
+      }`}
+      style={{ animationDelay: `${index * 130}ms` }}
+    >
+      <div className="h-6 w-2/5 rounded-md bg-[#1f1218]/15" />
+      <div className="mt-4 h-10 w-1/2 rounded-md bg-[#1f1218]/20 sm:h-12" />
+      <div className="mt-3 h-4 w-3/4 rounded-full bg-[#1f1218]/10" />
+
+      <div className="my-6 h-px w-full bg-[#1f1218]/10" />
+
+      <div className="grid gap-3.5">
+        {[0, 1, 2].map((i) => (
+          <div key={i} className="flex items-center gap-3">
+            <span className="h-5 w-5 shrink-0 rounded-full bg-[#1f1218]/15" />
+            <span className="h-4 w-4/5 rounded-full bg-[#1f1218]/10" />
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-auto pt-8">
+        <div className="h-12 w-full rounded-full bg-[#1f1218]/15 sm:h-14" />
+      </div>
+    </div>
+  );
+}
+
+function PlansGridSkeleton({ count = 3 }: { count?: number }) {
+  return (
+    <div role="status" aria-busy="true" className={plansGrid}>
+      <span className="sr-only">Loading…</span>
+      {Array.from({ length: count }).map((_, i) => (
+        <PlanCardSkeleton key={i} index={i} />
+      ))}
+    </div>
+  );
+}
+
+function FaqListSkeleton({ count = 4 }: { count?: number }) {
+  return (
+    <div role="status" aria-busy="true" className="grid gap-3">
+      <span className="sr-only">Loading…</span>
+      {Array.from({ length: count }).map((_, i) => (
+        <div
+          key={i}
+          className="flex h-[68px] animate-pulse items-center justify-between gap-4 rounded-[24px] border border-[#1f1218]/10 bg-[#ff9d66]/40 px-6 sm:h-[76px]"
+          style={{ animationDelay: `${i * 90}ms` }}
+        >
+          <span className="h-4 w-3/5 rounded-full bg-[#1f1218]/20" />
+          <span className="h-8 w-8 shrink-0 rounded-full bg-[#1f1218]/25" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* =====================================================================
+ *  PRICING + FAQ — BUKAN async, kerangka langsung tampil
+ * ===================================================================== */
+
+export default function PricingFaq() {
   return (
     <section className="relative overflow-hidden bg-white px-6 py-20 text-[#1f1218] sm:px-10 lg:px-14 lg:py-28">
       {/* ===== Latar: grid garis kotak ===== */}
@@ -73,108 +287,17 @@ export default function PricingFaq() {
         {/* ================= PRICING ================= */}
         <div id="pricing" className="scroll-mt-24">
           <SectionHeading title="Simple pricing" lead="Start free. Upgrade when your company grows." />
-          <div className="grid items-stretch gap-5 md:grid-cols-3 md:gap-6">
-            {plans.map((p, i) => {
-              const t = tones[p.tone];
-              const featured = p.tone === "orange";
-              return (
-                <Reveal key={p.name} delay={i * 130} className="h-full">
-                  <article
-                    className={`relative flex h-full flex-col rounded-[28px] border p-7 transition-all duration-300 hover:-translate-y-2 sm:p-8 ${
-                      featured ? "md:py-10" : ""
-                    } ${t.card}`}
-                  >
-                    <div className="flex min-h-[1.75rem] items-center justify-between gap-3">
-                      <h3 className="text-lg font-bold">{p.name}</h3>
-                      {featured && (
-                        <span className="shrink-0 rounded-full bg-[#1f1218] px-3 py-1 text-xs font-semibold text-white">
-                          Most popular
-                        </span>
-                      )}
-                    </div>
-
-                    <div className="mt-4 flex items-baseline gap-1">
-                      <span className="text-4xl font-black tracking-tight sm:text-5xl">{p.price}</span>
-                      {p.suffix && <span className={`text-sm font-semibold ${t.muted}`}>{p.suffix}</span>}
-                    </div>
-                    <p className={`mt-2 text-[15px] ${t.muted}`}>{p.text}</p>
-
-                    <div className="my-6 h-px w-full bg-current opacity-10" />
-
-                    <ul className="grid gap-3.5 text-[15px]">
-                      {p.items.map((item) => (
-                        <li key={item} className="flex items-start gap-3">
-                          <span className={`mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full ${t.check}`}>
-                            <Icon name="check" className="h-3 w-3" />
-                          </span>
-                          <span className="leading-snug">{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-
-                    <div className="mt-auto pt-8">
-                      <Link href={p.href} className={`${btnBase} w-full ${t.button}`}>
-                        {p.cta}
-                      </Link>
-                    </div>
-                  </article>
-                </Reveal>
-              );
-            })}
-          </div>
+          <Suspense fallback={<PlansGridSkeleton />}>
+            <PlansGrid />
+          </Suspense>
         </div>
 
         {/* ================= FAQ ================= */}
         <div id="faq" className="mt-20 grid scroll-mt-24 gap-4 sm:mt-24 lg:mt-28 lg:grid-cols-[1fr_1.7fr] lg:gap-16">
           <SectionHeading title="Questions" lead="Quick answers about getting started with ETERA." />
-          <div className="grid gap-3">
-            {faqs.map((f, i) => {
-              const isOpen = open === i;
-              return (
-                <Reveal key={f.q} delay={i * 90}>
-                  <div
-                    className={`overflow-hidden rounded-[24px] border transition-all duration-300 hover:-translate-y-0.5 ${
-                      isOpen
-                        ? "border-[#1f1218] bg-[#1f1218] text-white shadow-[0_24px_40px_-22px_rgba(31,18,24,.7)]"
-                        : "border-[#1f1218]/10 bg-[#ff9d66] text-[#1f1218] shadow-[0_18px_36px_-22px_rgba(255,157,102,.9)] hover:border-[#1f1218] hover:bg-[#1f1218] hover:text-white"
-                    }`}
-                  >
-                    <button
-                      type="button"
-                      id={`faq-btn-${i}`}
-                      aria-expanded={isOpen}
-                      aria-controls={`faq-panel-${i}`}
-                      onClick={() => setOpen(isOpen ? null : i)}
-                      className="group flex w-full items-center justify-between gap-4 px-6 py-5 text-left text-base font-bold focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-[#ff9d66] sm:text-lg"
-                    >
-                      <span>{f.q}</span>
-                      <span
-                        className={`grid h-8 w-8 shrink-0 place-items-center rounded-full transition-all duration-300 group-hover:scale-110 ${
-                          isOpen
-                            ? "rotate-45 bg-[#ff9d66] text-[#1f1218]"
-                            : "bg-[#1f1218] text-[#ff9d66] group-hover:bg-[#ff9d66] group-hover:text-[#1f1218]"
-                        }`}
-                      >
-                        <Icon name="plus" className="h-4 w-4" />
-                      </span>
-                    </button>
-                    <div
-                      id={`faq-panel-${i}`}
-                      role="region"
-                      aria-labelledby={`faq-btn-${i}`}
-                      className={`grid transition-[grid-template-rows] duration-300 ease-out ${
-                        isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
-                      }`}
-                    >
-                      <div className="overflow-hidden">
-                        <p className="max-w-[42rem] px-6 pb-6 leading-relaxed text-[#e3cdd4]">{f.a}</p>
-                      </div>
-                    </div>
-                  </div>
-                </Reveal>
-              );
-            })}
-          </div>
+          <Suspense fallback={<FaqListSkeleton />}>
+            <FaqList />
+          </Suspense>
         </div>
 
         {/* ================= CTA ================= */}

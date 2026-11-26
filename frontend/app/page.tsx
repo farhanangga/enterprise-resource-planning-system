@@ -1,11 +1,7 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
 import Hero from "@/components/sections/Hero";
 import About from "@/components/sections/About";
 import Steps from "@/components/sections/Steps";
-import Pricing from "@/components/sections/Pricing";
-import Faq from "@/components/sections/Faq";
-import Cta from "@/components/sections/Cta";
 import Footer from "@/components/sections/Footer";
 import PricingFaq from "@/components/sections/pricingFaq";
 
@@ -20,9 +16,7 @@ export default function LandingPage() {
   return (
     <div className="overflow-x-clip bg-white font-sans text-[#1f1218]">
       <main>
-        <Suspense fallback={<div>Loading hero...</div>}>
-          <Hero />
-        </Suspense>
+        <Hero />
         <About />
         <Steps />
         <PricingFaq />
