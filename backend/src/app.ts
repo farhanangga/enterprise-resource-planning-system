@@ -4,6 +4,7 @@ import cors from "cors";
 import userRoutes from "./routes/userRoutes";
 import heroRoutes from "./routes/heroRoutes";
 import aboutRoutes from "./routes/aboutRoutes";
+import stepsRoutes from "./routes/stepsRoutes";
 import apiKeyMiddleware from "./middlewares/apiKeyMiddleware";
 
 
@@ -25,4 +26,6 @@ app.use("/api",apiKeyMiddleware);
 app.use("/api/users", userRoutes);
 app.use("/api/hero", heroRoutes);
 app.use("/api/about", aboutRoutes);
+app.use("/api/steps", stepsRoutes);
+
 export default app;
