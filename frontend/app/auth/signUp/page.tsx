@@ -13,7 +13,7 @@ export const metadata: Metadata = {
    ===================================================================== */
 
 /** Email yang dianggap sudah terdaftar (untuk simulasi error "email sudah dipakai") */
-const existingEmails = ["owner@etera.app", "admin@etera.app", "staff@etera.app"];
+const existingEmails = ["owner@etera.app", "admin@etera.app", "manager@etera.app", "finance@etera.app", "staff@etera.app"];
 
 /** Pilihan jenis usaha */
 const industries = ["Retail", "Food & Beverage", "Manufacturing", "Distribution", "Services", "Other"];
@@ -32,6 +32,17 @@ const copy = {
 /** Tujuan setelah akun berhasil dibuat */
 const redirectTo = "/dashboard";
 
+/** Alamat halaman Sign In (sesuaikan dengan struktur folder Anda) */
+const signInHref = "/auth/signIn";
+
 export default function SignUpPage() {
-  return <SignUpForm existingEmails={existingEmails} industries={industries} copy={copy} redirectTo={redirectTo} />;
+  return (
+    <SignUpForm
+      existingEmails={existingEmails}
+      industries={industries}
+      copy={copy}
+      redirectTo={redirectTo}
+      signInHref={signInHref}
+    />
+  );
 }

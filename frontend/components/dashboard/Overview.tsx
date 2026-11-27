@@ -3,14 +3,11 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { Icon, type IconName } from "@/components/ui/Icon";
 import Reveal from "@/components/ui/Reveal";
-import type { DashboardData, Permission, Role, SessionUser } from "./types";
+import Link from "next/link";
+import { useApp } from "./app-context";
+import type { DashboardData, Permission } from "./types";
 
-type Props = {
-  data: DashboardData;
-  role: Role;
-  user: SessionUser;
-  can: (perm: Permission) => boolean;
-};
+type Props = { data: DashboardData };
 
 const jt = (n: number) => `Rp ${n.toFixed(1).replace(".", ",")} jt`;
 
@@ -127,8 +124,9 @@ function SalesChart({ chart }: { chart: DashboardData["chart"] }) {
   );
 }
 
-export default function Overview({ data, role, user, can }: Props) {
-  const info = data.roleInfo[role];
+export default function Overview({ data }: Props) {
+  const { role, user, can, roleInfo } = useApp();
+  const info = roleInfo[role];
   const first = user.name.split(" ")[0];
   const [tasks, setTasks] = useState(data.tasks);
 
@@ -449,20 +447,28 @@ export default function Overview({ data, role, user, can }: Props) {
             </div>
             {actions.length > 0 && (
               <div className="flex flex-wrap gap-3">
-                {actions.map((a, i) => (
-                  <button
-                    key={a.label}
-                    type="button"
-                    className={`flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-colors duration-200 ${
-                      i === 0
-                        ? "bg-[#1f1218] text-white hover:bg-white hover:text-[#1f1218]"
-                        : "bg-white text-[#1f1218] hover:bg-[#1f1218] hover:text-white"
-                    }`}
-                  >
-                    <Icon name={a.icon} className="h-4 w-4" />
-                    {a.label}
-                  </button>
-                ))}
+                {actions.map((a, i) => {
+                  const cls = `flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-colors duration-200 ${
+                    i === 0
+                      ? "bg-[#1f1218] text-white hover:bg-white hover:text-[#1f1218]"
+                      : "bg-white text-[#1f1218] hover:bg-[#1f1218] hover:text-white"
+                  }`;
+                  const inner = (
+                    <>
+                      <Icon name={a.icon} className="h-4 w-4" />
+                      {a.label}
+                    </>
+                  );
+                  return a.href ? (
+                    <Link key={a.label} href={a.href} className={cls}>
+                      {inner}
+                    </Link>
+                  ) : (
+                    <button key={a.label} type="button" className={cls}>
+                      {inner}
+                    </button>
+                  );
+                })}
               </div>
             )}
           </div>

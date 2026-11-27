@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState, type ReactNode } from "react";
 import { Icon, type IconName } from "@/components/ui/Icon";
 import Reveal from "@/components/ui/Reveal";
+import { saveSession } from "@/lib/session";
 
 export type Account = { name: string; email: string; password: string; role: string; company: string };
 export type SignInCopy = { lines: string[]; text: string; perks: string[] };
@@ -13,6 +14,8 @@ type Props = {
   accounts: Account[];
   copy: SignInCopy;
   redirectTo?: string;
+  signUpHref?: string;
+  forgotHref?: string;
   showDemoHint?: boolean;
 };
 
@@ -64,7 +67,14 @@ function Field({
   );
 }
 
-export default function SignInForm({ accounts, copy, redirectTo = "/dashboard", showDemoHint = false }: Props) {
+export default function SignInForm({
+  accounts,
+  copy,
+  redirectTo = "/dashboard",
+  signUpHref = "/auth/signUp",
+  forgotHref = "/forgot-password",
+  showDemoHint = false,
+}: Props) {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -108,22 +118,14 @@ export default function SignInForm({ accounts, copy, redirectTo = "/dashboard", 
       return;
     }
 
-    // sesi sederhana (prototipe): tanpa password
-    try {
-      const store = remember ? window.localStorage : window.sessionStorage;
-      store.setItem(
-        "etera:user",
-        JSON.stringify({ name: account.name, email: account.email, role: account.role, company: account.company }),
-      );
-    } catch {}
+    // sesi sederhana (prototipe): tanpa password. Peran dipakai dashboard.
+    saveSession({ name: account.name, email: account.email, role: account.role, company: account.company }, remember);
 
     setStatus("success");
     setTimeout(() => router.push(redirectTo), 700);
   }
 
-  function fillDemo() {
-    const a = accounts[0];
-    if (!a) return;
+  function fillAccount(a: Account) {
     setEmail(a.email);
     setPassword(a.password);
     setErrors({});
@@ -266,7 +268,7 @@ export default function SignInForm({ accounts, copy, redirectTo = "/dashboard", 
                   />
                   Remember me
                 </label>
-                <Link href="/forgot-password" className="font-bold text-[#e8641f] hover:underline">
+                <Link href={forgotHref} className="font-bold text-[#e8641f] hover:underline">
                   Forgot password?
                 </Link>
               </div>
@@ -296,22 +298,31 @@ export default function SignInForm({ accounts, copy, redirectTo = "/dashboard", 
             </form>
           </Reveal>
 
-          {showDemoHint && accounts[0] && (
+          {showDemoHint && accounts.length > 0 && (
             <Reveal delay={300}>
-              <div className="mt-6 flex items-center justify-between gap-3 rounded-2xl border border-dashed border-[#ff9d66] bg-[#ff9d66]/10 px-4 py-3 text-[13px]">
-                <span className="leading-snug">
-                  <b className="block">Demo account</b>
-                  <span className="text-[#5d4a52]">
-                    {accounts[0].email} · {accounts[0].password}
-                  </span>
-                </span>
-                <button
-                  type="button"
-                  onClick={fillDemo}
-                  className="shrink-0 rounded-full bg-[#1f1218] px-4 py-2 text-xs font-semibold text-white transition-colors duration-200 hover:bg-[#ff9d66] hover:text-[#1f1218]"
-                >
-                  Autofill
-                </button>
+              <div className="mt-6 rounded-2xl border border-dashed border-[#ff9d66] bg-[#ff9d66]/10 p-4 text-[13px]">
+                <p className="font-bold">
+                  Demo accounts <span className="font-semibold text-[#5d4a52]">· click one to fill the form</span>
+                </p>
+                <ul className="mt-3 grid gap-2">
+                  {accounts.map((a) => (
+                    <li key={a.email}>
+                      <button
+                        type="button"
+                        onClick={() => fillAccount(a)}
+                        className="flex w-full items-center justify-between gap-3 rounded-xl bg-white px-3 py-2 text-left ring-1 ring-[#1f1218]/5 transition-colors duration-200 hover:bg-[#ff9d66]"
+                      >
+                        <span className="min-w-0 leading-tight">
+                          <b className="block truncate">{a.email}</b>
+                          <span className="text-[12px] text-[#1f1218]/70">
+                            {a.name} · {a.password}
+                          </span>
+                        </span>
+                        <span className="shrink-0 rounded-full bg-[#1f1218] px-2.5 py-0.5 text-[11px] font-bold text-white">{a.role}</span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </Reveal>
           )}
@@ -319,7 +330,7 @@ export default function SignInForm({ accounts, copy, redirectTo = "/dashboard", 
           <Reveal delay={400}>
             <p className="mt-7 text-center text-sm text-[#5d4a52]">
               Don’t have an account?{" "}
-              <Link href="/signup" className="font-bold text-[#1f1218] underline decoration-[#ff9d66] decoration-2 underline-offset-4 hover:text-[#e8641f]">
+              <Link href={signUpHref} className="font-bold text-[#1f1218] underline decoration-[#ff9d66] decoration-2 underline-offset-4 hover:text-[#e8641f]">
                 Sign up
               </Link>
             </p>

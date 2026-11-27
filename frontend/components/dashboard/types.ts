@@ -6,7 +6,9 @@ export type Permission =
   // menu / modul
   | "dashboard:view"
   | "inventory:view"
-  | "inventory:manage"
+  | "inventory:manage" // tambah / ubah produk
+  | "inventory:adjust" // catat barang masuk / keluar / hitung stok
+  | "inventory:cost" // lihat harga modal dan nilai stok
   | "sales:view"
   | "purchasing:view"
   | "finance:view"
@@ -32,6 +34,25 @@ export type SessionUser = { name: string; email: string; role: string; company: 
 
 export type MenuItem = { label: string; href: string; icon: IconName; perm: Permission; ready: boolean };
 
+/** Konfigurasi yang dipakai bersama oleh semua halaman (sidebar, topbar, izin) */
+export type ShellConfig = {
+  settings: {
+    /** tampilkan pilihan "Viewing as" untuk mencoba semua peran (matikan sebelum rilis) */
+    allowRoleSwitch: boolean;
+    /** true = tanpa sesi login akan diarahkan ke signInHref */
+    requireLogin: boolean;
+    /** halaman Sign In (tujuan saat belum login / setelah Sign out) */
+    signInHref: string;
+    /** dipakai bila requireLogin = false dan belum ada sesi */
+    fallbackUser: SessionUser;
+  };
+  roleInfo: Record<Role, { label: string; description: string }>;
+  permissions: Record<Role, Permission[]>;
+  menu: MenuItem[];
+  adminMenu: MenuItem[];
+  notifications: { text: string; time: string }[];
+};
+
 export type Kpi = {
   label: string;
   value: string;
@@ -44,21 +65,9 @@ export type Kpi = {
 
 export type ChartSet = { labels: string[]; sales: number[]; purchases: number[] };
 
+/** Data khusus halaman Dashboard */
 export type DashboardData = {
-  settings: {
-    /** tampilkan pilihan "Viewing as" untuk mencoba semua peran (matikan sebelum rilis) */
-    allowRoleSwitch: boolean;
-    /** true = tanpa sesi login akan diarahkan ke /signin */
-    requireLogin: boolean;
-    /** dipakai bila requireLogin = false dan belum ada sesi */
-    fallbackUser: SessionUser;
-  };
-  roleInfo: Record<Role, { label: string; description: string }>;
-  permissions: Record<Role, Permission[]>;
-  menu: MenuItem[];
-  adminMenu: MenuItem[];
-  quickActions: { label: string; icon: IconName; perm: Permission }[];
-  notifications: { text: string; time: string }[];
+  quickActions: { label: string; icon: IconName; perm: Permission; href?: string }[];
   kpis: Kpi[];
   chart: { "7d": ChartSet; "30d": ChartSet };
   cashflow: { inflow: number; outflow: number };

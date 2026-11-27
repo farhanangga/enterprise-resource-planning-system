@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState, type ReactNode } from "react";
 import { Icon, type IconName } from "@/components/ui/Icon";
 import Reveal from "@/components/ui/Reveal";
+import { saveSession } from "@/lib/session";
 
 export type SignUpCopy = {
   lines: string[];
@@ -17,6 +18,7 @@ type Props = {
   industries: string[];
   copy: SignUpCopy;
   redirectTo?: string;
+  signInHref?: string;
 };
 
 type Values = {
@@ -115,7 +117,13 @@ function EyeToggle({ show, onClick }: { show: boolean; onClick: () => void }) {
   );
 }
 
-export default function SignUpForm({ existingEmails, industries, copy, redirectTo = "/dashboard" }: Props) {
+export default function SignUpForm({
+  existingEmails,
+  industries,
+  copy,
+  redirectTo = "/dashboard",
+  signInHref = "/auth/signIn",
+}: Props) {
   const router = useRouter();
   const [values, setValues] = useState<Values>({
     name: "",
@@ -150,12 +158,7 @@ export default function SignUpForm({ existingEmails, industries, copy, redirectT
     setStatus("loading");
     await new Promise((r) => setTimeout(r, 900)); // simulasi request
 
-    try {
-      window.localStorage.setItem(
-        "etera:user",
-        JSON.stringify({ name: values.name.trim(), email: values.email.trim(), role: "Owner", company: values.company.trim() }),
-      );
-    } catch {}
+    saveSession({ name: values.name.trim(), email: values.email.trim(), role: "Owner", company: values.company.trim() }, true);
     setStatus("success");
   }
 
@@ -432,7 +435,7 @@ export default function SignUpForm({ existingEmails, industries, copy, redirectT
               <Reveal delay={300}>
                 <p className="mt-7 text-center text-sm text-[#5d4a52]">
                   Already have an account?{" "}
-                  <Link href="/signin" className="font-bold text-[#1f1218] underline decoration-[#ff9d66] decoration-2 underline-offset-4 hover:text-[#e8641f]">
+                  <Link href={signInHref} className="font-bold text-[#1f1218] underline decoration-[#ff9d66] decoration-2 underline-offset-4 hover:text-[#e8641f]">
                     Sign in
                   </Link>
                 </p>

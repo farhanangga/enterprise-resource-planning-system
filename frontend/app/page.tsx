@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import Hero from "@/components/sections/Hero";
 import About from "@/components/sections/About";
 import Steps from "@/components/sections/Steps";
+import Pricing from "@/components/sections/Pricing";
+import Faq from "@/components/sections/Faq";
+import Cta from "@/components/sections/Cta";
 import Footer from "@/components/sections/Footer";
-import PricingFaq from "@/components/sections/pricingFaq";
-
+import { AboutSkeleton, HeroSkeleton } from "@/components/sections/Skeletons";
 
 export const metadata: Metadata = {
   title: "ETERA – Manage your company more easily",
@@ -16,10 +19,16 @@ export default function LandingPage() {
   return (
     <div className="overflow-x-clip bg-white font-sans text-[#1f1218]">
       <main>
-        <Hero />
-        <About />
+        <Suspense fallback={<HeroSkeleton />}>
+          <Hero />
+        </Suspense>
+        <Suspense fallback={<AboutSkeleton />}>
+          <About />
+        </Suspense>
         <Steps />
-        <PricingFaq />
+        <Pricing />
+        <Faq />
+        <Cta />
       </main>
       <Footer />
     </div>

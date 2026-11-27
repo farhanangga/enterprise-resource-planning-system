@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import DashboardShell from "@/components/dashboard/DashboardShell";
+import Overview from "@/components/dashboard/Overview";
 import type { DashboardData } from "@/components/dashboard/types";
 
 export const metadata: Metadata = {
@@ -8,88 +8,21 @@ export const metadata: Metadata = {
 };
 
 /* =====================================================================
-   DATA DASHBOARD (statis) — atur semuanya di sini.
-   - Peran (role) diambil dari akun yang login (lihat app/signin/page.tsx).
-   - Siapa boleh melihat apa diatur di `permissions`.
-   - Setiap menu dan widget punya `perm`; tampil hanya bila peran punya izinnya.
-   Catatan: hanya untuk prototipe. Untuk produksi, ambil data dari API
-   dan cek izin juga di server.
+   DATA HALAMAN DASHBOARD (statis) — atur semuanya di sini.
+   Sidebar, peran, dan izin ada di app/(app)/layout.tsx.
+   Setiap widget punya `perm`; tampil hanya bila peran punya izinnya.
+   Catatan: hanya untuk prototipe. Untuk produksi, ambil data dari API.
    ===================================================================== */
 
 const data: DashboardData = {
-  settings: {
-    allowRoleSwitch: true, // matikan sebelum rilis
-    requireLogin: false,
-    fallbackUser: { name: "Guest Owner", email: "owner@etera.app", role: "Owner", company: "Toko Rina" },
-  },
-
-  /* ---------- PERAN ---------- */
-  roleInfo: {
-    owner: { label: "Owner", description: "Full view of your business: sales, cash, stock, team, and subscription." },
-    admin: { label: "Admin", description: "Run daily operations, manage people, and keep every module in order." },
-    manager: { label: "Manager", description: "Track sales, purchasing, and stock, and keep orders moving." },
-    finance: { label: "Finance", description: "Keep receivables, invoices, and cash flow under control." },
-    staff: { label: "Staff", description: "Your tasks, orders, and stock alerts for today." },
-  },
-
-  /* ---------- IZIN PER PERAN ---------- */
-  permissions: {
-    owner: [
-      "dashboard:view", "inventory:view", "inventory:manage", "sales:view", "purchasing:view", "finance:view", "hr:view",
-      "reports:view", "team:manage", "settings:view",
-      "kpi:business", "chart:sales", "finance:receivables", "finance:cashflow", "products:top", "stock:low",
-      "orders:pending", "invoices:unpaid", "activity:view", "billing:plan", "onboarding:view",
-    ],
-    admin: [
-      "dashboard:view", "inventory:view", "inventory:manage", "sales:view", "purchasing:view", "finance:view", "hr:view",
-      "reports:view", "team:manage", "settings:view",
-      "kpi:business", "chart:sales", "finance:receivables", "products:top", "stock:low",
-      "orders:pending", "invoices:unpaid", "activity:view", "onboarding:view",
-    ],
-    manager: [
-      "dashboard:view", "inventory:view", "inventory:manage", "sales:view", "purchasing:view", "reports:view", "settings:view",
-      "kpi:business", "chart:sales", "products:top", "stock:low", "orders:pending", "activity:view",
-    ],
-    finance: [
-      "dashboard:view", "finance:view", "reports:view", "settings:view",
-      "kpi:business", "chart:sales", "finance:receivables", "finance:cashflow", "invoices:unpaid", "activity:view",
-    ],
-    staff: [
-      "dashboard:view", "inventory:view", "sales:view", "settings:view",
-      "kpi:staff", "products:top", "stock:low", "orders:pending", "activity:view",
-    ],
-  },
-
-  /* ---------- MENU SIDEBAR ---------- */
-  // ready: false = tampil "Soon" dan belum bisa diklik. Ubah ke true setelah halamannya dibuat.
-  menu: [
-    { label: "Dashboard", href: "/dashboard", icon: "dashboard", perm: "dashboard:view", ready: true },
-    { label: "Inventory", href: "/inventory", icon: "inventory", perm: "inventory:view", ready: false },
-    { label: "Sales", href: "/sales", icon: "sales", perm: "sales:view", ready: false },
-    { label: "Purchasing", href: "/purchasing", icon: "cart", perm: "purchasing:view", ready: false },
-    { label: "Finance", href: "/finance", icon: "finance", perm: "finance:view", ready: false },
-    { label: "HR", href: "/hr", icon: "hr", perm: "hr:view", ready: false },
-    { label: "Reports", href: "/reports", icon: "reports", perm: "reports:view", ready: false },
-  ],
-  adminMenu: [
-    { label: "Team & Roles", href: "/team", icon: "shield", perm: "team:manage", ready: false },
-    { label: "Settings", href: "/settings", icon: "settings", perm: "settings:view", ready: false },
-  ],
-
   /* ---------- AKSI CEPAT (maks. 3 per peran, urut dari atas) ---------- */
   quickActions: [
     { label: "New sale", icon: "sales", perm: "sales:view" },
     { label: "Create invoice", icon: "finance", perm: "finance:receivables" },
     { label: "Record payment", icon: "check", perm: "finance:receivables" },
     { label: "Create PO", icon: "cart", perm: "purchasing:view" },
-    { label: "Add product", icon: "inventory", perm: "inventory:manage" },
-    { label: "Check stock", icon: "inventory", perm: "stock:low" },
-  ],
-
-  notifications: [
-    { text: "Invoice INV-2188 is 5 days overdue", time: "10 min ago" },
-    { text: "Gula Aren 1kg is below minimum stock", time: "1 hour ago" },
-    { text: "New order SO-1044 from Toko Sinar Jaya", time: "2 hours ago" },
+    { label: "Add product", icon: "inventory", perm: "inventory:manage", href: "/inventory" },
+    { label: "Check stock", icon: "inventory", perm: "stock:low", href: "/inventory" },
   ],
 
   /* ---------- KPI ---------- */
@@ -207,5 +140,5 @@ const data: DashboardData = {
 };
 
 export default function DashboardPage() {
-  return <DashboardShell data={data} />;
+  return <Overview data={data} />;
 }
