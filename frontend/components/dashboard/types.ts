@@ -11,8 +11,15 @@ export type Permission =
   | "inventory:cost" // lihat harga modal dan nilai stok
   | "sales:view"
   | "purchasing:view"
+  | "purchasing:create" // membuat PO (tanpa purchasing:manage disimpan sebagai draft)
+  | "purchasing:manage" // memesan ke supplier dan membatalkan PO
+  | "purchasing:receive" // mencatat penerimaan barang
+  | "purchasing:payment" // membayar tagihan supplier
+  | "purchasing:all" // melihat PO semua orang dan daftar supplier
   | "finance:view"
   | "hr:view"
+  | "hr:manage" // tambah/ubah karyawan, ajukan dan putuskan cuti
+  | "hr:payroll" // melihat gaji dan tab Payroll
   | "reports:view"
   | "team:manage"
   | "settings:view"

@@ -29,23 +29,23 @@ const config: ShellConfig = {
   permissions: {
     owner: [
       "dashboard:view", "inventory:view", "inventory:manage", "inventory:adjust", "inventory:cost",
-      "sales:view", "purchasing:view", "finance:view", "hr:view", "reports:view", "team:manage", "settings:view",
+      "sales:view", "purchasing:view", "purchasing:create", "purchasing:manage", "purchasing:receive", "purchasing:payment", "purchasing:all", "finance:view", "hr:view", "hr:manage", "hr:payroll", "reports:view", "team:manage", "settings:view",
       "kpi:business", "chart:sales", "finance:receivables", "finance:cashflow", "products:top", "stock:low",
       "orders:pending", "invoices:unpaid", "activity:view", "billing:plan", "onboarding:view",
     ],
     admin: [
       "dashboard:view", "inventory:view", "inventory:manage", "inventory:adjust", "inventory:cost",
-      "sales:view", "purchasing:view", "finance:view", "hr:view", "reports:view", "team:manage", "settings:view",
+      "sales:view", "purchasing:view", "purchasing:create", "purchasing:manage", "purchasing:receive", "purchasing:payment", "purchasing:all", "finance:view", "hr:view", "hr:manage", "reports:view", "team:manage", "settings:view",
       "kpi:business", "chart:sales", "finance:receivables", "products:top", "stock:low",
       "orders:pending", "invoices:unpaid", "activity:view", "onboarding:view",
     ],
     manager: [
       "dashboard:view", "inventory:view", "inventory:manage", "inventory:adjust", "inventory:cost",
-      "sales:view", "purchasing:view", "reports:view", "settings:view",
+      "sales:view", "purchasing:view", "purchasing:create", "purchasing:manage", "purchasing:receive", "purchasing:all", "reports:view", "settings:view",
       "kpi:business", "chart:sales", "products:top", "stock:low", "orders:pending", "activity:view",
     ],
     finance: [
-      "dashboard:view", "finance:view", "reports:view", "settings:view",
+      "dashboard:view", "hr:view", "hr:payroll", "purchasing:view", "purchasing:payment", "purchasing:all", "finance:view", "reports:view", "settings:view",
       "kpi:business", "chart:sales", "finance:receivables", "finance:cashflow", "invoices:unpaid", "activity:view",
     ],
     staff: [
@@ -59,9 +59,9 @@ const config: ShellConfig = {
     { label: "Dashboard", href: "/dashboard/main", icon: "dashboard", perm: "dashboard:view", ready: true },
     { label: "Inventory", href: "/dashboard/inventory", icon: "inventory", perm: "inventory:view", ready: true },
     { label: "Sales", href: "/dashboard/sales", icon: "sales", perm: "sales:view", ready: true },
-    { label: "Purchasing", href: "/dashboard/purchasing", icon: "cart", perm: "purchasing:view", ready: false },
-    { label: "Finance", href: "/dashboard/finance", icon: "finance", perm: "finance:view", ready: false },
-    { label: "HR", href: "/dashboard/hr", icon: "hr", perm: "hr:view", ready: false },
+    { label: "Purchasing", href: "/dashboard/purchasing", icon: "cart", perm: "purchasing:view", ready: true },
+    { label: "Finance", href: "/dashboard/finance", icon: "finance", perm: "finance:view", ready: true },
+    { label: "HR", href: "/dashboard/hr", icon: "hr", perm: "hr:view", ready: true },
     { label: "Reports", href: "/dashboard/reports", icon: "reports", perm: "reports:view", ready: false },
   ],
   adminMenu: [
