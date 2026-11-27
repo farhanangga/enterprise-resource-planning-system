@@ -58,7 +58,7 @@ const config: ShellConfig = {
   menu: [
     { label: "Dashboard", href: "/dashboard/main", icon: "dashboard", perm: "dashboard:view", ready: true },
     { label: "Inventory", href: "/dashboard/inventory", icon: "inventory", perm: "inventory:view", ready: true },
-    { label: "Sales", href: "/dashboard/sales", icon: "sales", perm: "sales:view", ready: false },
+    { label: "Sales", href: "/dashboard/sales", icon: "sales", perm: "sales:view", ready: true },
     { label: "Purchasing", href: "/dashboard/purchasing", icon: "cart", perm: "purchasing:view", ready: false },
     { label: "Finance", href: "/dashboard/finance", icon: "finance", perm: "finance:view", ready: false },
     { label: "HR", href: "/dashboard/hr", icon: "hr", perm: "hr:view", ready: false },
