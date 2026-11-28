@@ -124,7 +124,7 @@ export default function Sidebar({ menu, adminMenu, can, user, roleLabel, collaps
         </div>
 
         {/* navigasi */}
-        <nav aria-label="Dashboard" className="scroll-dark flex-1 overflow-y-auto overflow-x-hidden overscroll-contain px-3 pb-3">
+        <nav aria-label="Dashboard" className="sidebar-scroll flex-1 overflow-y-auto overflow-x-hidden overscroll-contain px-3 pb-3">
           <p className={`px-3 pb-2 pt-2 text-[11px] font-semibold uppercase tracking-wider text-white/40 ${hide}`}>Main</p>
           <ul className="grid gap-1">
             {main.map((item) => (
