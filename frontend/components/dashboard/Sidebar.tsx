@@ -101,12 +101,25 @@ export default function Sidebar({ menu, adminMenu, can, user, roleLabel, collaps
           open ? "translate-x-0" : "-translate-x-full"
         } ${collapsed ? "lg:w-[84px]" : "lg:w-64"}`}
       >
-        {/* logo */}
-        <div className={`flex h-16 items-center justify-between px-5 ${collapsed ? "lg:justify-center lg:px-0" : ""}`}>
+        {/* logo + tombol kecilkan sidebar */}
+        <div className={`flex h-16 items-center justify-between px-5 ${collapsed ? "lg:justify-center lg:gap-1 lg:px-2" : ""}`}>
           <Link href="/dashboard" className="flex items-center gap-2.5 text-lg font-black tracking-wide">
-            <span className="grid h-8 w-8 place-items-center rounded-lg bg-[#ff9d66] text-[#1f1218]">E</span>
+            <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-[#ff9d66] text-[#1f1218]">E</span>
             <span className={hide}>ETERA</span>
           </Link>
+
+          {/* desktop: kecilkan / besarkan sidebar */}
+          <button
+            type="button"
+            onClick={onToggle}
+            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            className="hidden h-8 w-8 shrink-0 place-items-center rounded-full text-white/60 transition-colors duration-200 hover:bg-white/10 hover:text-white lg:grid"
+          >
+            <Icon name="chevron" className={`h-5 w-5 transition-transform duration-300 ${collapsed ? "-rotate-90" : "rotate-90"}`} />
+          </button>
+
+          {/* mobile: tutup menu */}
           <button
             type="button"
             onClick={onClose}
@@ -165,14 +178,6 @@ export default function Sidebar({ menu, adminMenu, can, user, roleLabel, collaps
           >
             <Icon name="logout" className="h-5 w-5 shrink-0" />
             <span className={hide}>Sign out</span>
-          </button>
-          <button
-            type="button"
-            onClick={onToggle}
-            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-            className="mt-1 hidden w-full items-center justify-center rounded-xl py-2 text-white/50 transition-colors duration-200 hover:bg-white/10 hover:text-white lg:flex"
-          >
-            <Icon name="chevron" className={`h-5 w-5 transition-transform duration-300 ${collapsed ? "-rotate-90" : "rotate-90"}`} />
           </button>
         </div>
       </aside>

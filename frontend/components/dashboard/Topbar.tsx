@@ -2,39 +2,25 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Icon } from "@/components/ui/Icon";
-import type { Role, SessionUser } from "./types";
+import type { Role } from "./types";
 
 type Props = {
-  user: SessionUser;
   role: Role;
-  roleLabel: string;
   roles: { value: Role; label: string }[];
   allowRoleSwitch: boolean;
   notifications: { text: string; time: string }[];
   onRoleChange: (r: Role) => void;
   onMenu: () => void;
-  onSignOut: () => void;
 };
 
-function initials(name: string) {
-  return (
-    name
-      .split(" ")
-      .filter(Boolean)
-      .slice(0, 2)
-      .map((w) => w[0]?.toUpperCase())
-      .join("") || "U"
-  );
-}
-
-export default function Topbar({ user, role, roleLabel, roles, allowRoleSwitch, notifications, onRoleChange, onMenu, onSignOut }: Props) {
-  const [panel, setPanel] = useState<"none" | "notif" | "profile">("none");
+export default function Topbar({ role, roles, allowRoleSwitch, notifications, onRoleChange, onMenu }: Props) {
+  const [notifOpen, setNotifOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   // tutup panel saat klik di luar
   useEffect(() => {
     const onDown = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setPanel("none");
+      if (ref.current && !ref.current.contains(e.target as Node)) setNotifOpen(false);
     };
     document.addEventListener("mousedown", onDown);
     return () => document.removeEventListener("mousedown", onDown);
@@ -89,15 +75,15 @@ export default function Topbar({ user, role, roleLabel, roles, allowRoleSwitch, 
         <div className="relative">
           <button
             type="button"
-            onClick={() => setPanel(panel === "notif" ? "none" : "notif")}
+            onClick={() => setNotifOpen(!notifOpen)}
             aria-label="Notifications"
-            aria-expanded={panel === "notif"}
+            aria-expanded={notifOpen}
             className={iconBtn}
           >
             <Icon name="bell" className="h-5 w-5" />
             <span className="absolute right-2.5 top-2.5 h-2 w-2 rounded-full bg-[#e8641f] ring-2 ring-white" />
           </button>
-          {panel === "notif" && (
+          {notifOpen && (
             <div className="absolute right-0 top-12 w-80 max-w-[85vw] rounded-2xl border border-[#1f1218]/10 bg-white p-2 shadow-[0_24px_48px_-20px_rgba(31,18,24,.45)]">
               <p className="px-3 py-2 text-sm font-black">Notifications</p>
               <ul>
@@ -108,41 +94,6 @@ export default function Topbar({ user, role, roleLabel, roles, allowRoleSwitch, 
                   </li>
                 ))}
               </ul>
-            </div>
-          )}
-        </div>
-
-        {/* profil */}
-        <div className="relative">
-          <button
-            type="button"
-            onClick={() => setPanel(panel === "profile" ? "none" : "profile")}
-            aria-label="Account menu"
-            aria-expanded={panel === "profile"}
-            className="flex items-center gap-2 rounded-full border border-[#1f1218]/10 bg-white py-1 pl-1 pr-3 transition-colors duration-200 hover:bg-[#ff9d66]/20"
-          >
-            <span className="grid h-8 w-8 place-items-center rounded-full bg-[#ff9d66] text-xs font-black">{initials(user.name)}</span>
-            <span className="hidden text-left leading-tight md:block">
-              <b className="block text-[13px]">{user.name.split(" ")[0]}</b>
-              <span className="text-[11px] text-[#5d4a52]">{roleLabel}</span>
-            </span>
-            <Icon name="chevron" className="hidden h-4 w-4 md:block" />
-          </button>
-          {panel === "profile" && (
-            <div className="absolute right-0 top-12 w-64 rounded-2xl border border-[#1f1218]/10 bg-white p-2 shadow-[0_24px_48px_-20px_rgba(31,18,24,.45)]">
-              <div className="px-3 py-2">
-                <p className="truncate text-sm font-black">{user.name}</p>
-                <p className="truncate text-xs text-[#5d4a52]">{user.email}</p>
-                <span className="mt-2 inline-block rounded-full bg-[#1f1218] px-2.5 py-0.5 text-[11px] font-bold text-white">{roleLabel}</span>
-              </div>
-              <button
-                type="button"
-                onClick={onSignOut}
-                className="mt-1 flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors hover:bg-[#ff9d66]/20"
-              >
-                <Icon name="logout" className="h-[18px] w-[18px]" />
-                Sign out
-              </button>
             </div>
           )}
         </div>
