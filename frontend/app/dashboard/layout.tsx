@@ -62,7 +62,7 @@ const config: ShellConfig = {
     { label: "Purchasing", href: "/dashboard/purchasing", icon: "cart", perm: "purchasing:view", ready: true },
     { label: "Finance", href: "/dashboard/finance", icon: "finance", perm: "finance:view", ready: true },
     { label: "HR", href: "/dashboard/hr", icon: "hr", perm: "hr:view", ready: true },
-    { label: "Reports", href: "/dashboard/reports", icon: "reports", perm: "reports:view", ready: false },
+    { label: "Reports", href: "/dashboard/reports", icon: "reports", perm: "reports:view", ready: true },
   ],
   adminMenu: [
     { label: "Team & Roles", href: "/dashboard/team", icon: "shield", perm: "team:manage", ready: false },
