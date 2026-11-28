@@ -60,7 +60,7 @@ export default function Modal({ title, onClose, size = "md", children }: { title
         className={`absolute inset-0 bg-[#1f1218]/50 backdrop-blur-sm transition-opacity duration-300 ${entered ? "opacity-100" : "opacity-0"}`}
       />
       <div
-        className={`relative max-h-[90svh] w-full overflow-y-auto rounded-[28px] bg-white p-6 shadow-[0_40px_80px_-30px_rgba(31,18,24,.6)] transition-all duration-300 ${
+        className={`relative max-h-[90svh] w-full overflow-y-auto overscroll-contain rounded-[28px] bg-white p-6 shadow-[0_40px_80px_-30px_rgba(31,18,24,.6)] transition-all duration-300 ${
           size === "lg" ? "max-w-2xl" : "max-w-lg"
         } ${entered ? "translate-y-0 scale-100 opacity-100" : "translate-y-4 scale-95 opacity-0"}`}
       >

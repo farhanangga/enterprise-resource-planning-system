@@ -24,3 +24,49 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* ---------- scrollbar ----------
+   - html: ruang scrollbar selalu disediakan, jadi halaman tidak "melompat"
+     saat modal membuka/menutup (modal mengunci scroll halaman).
+   - scrollbar dibuat tipis dan mengikuti warna ETERA, bukan bawaan browser.
+   - .scroll-dark dipakai di atas latar gelap (sidebar). */
+html {
+  color-scheme: light;
+  background-color: #ffffff;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(31, 18, 24, 0.28) transparent;
+}
+
+body {
+  overflow-x: clip; /* cegah scrollbar horizontal halaman akibat elemen yang melebar */
+}
+
+.scroll-dark {
+  scrollbar-color: rgba(255, 255, 255, 0.28) transparent;
+}
+
+/* cadangan untuk browser yang belum mendukung scrollbar-width (Safari lama) */
+@supports not (scrollbar-width: thin) {
+  *::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  *::-webkit-scrollbar-thumb {
+    background: rgba(31, 18, 24, 0.28);
+    background-clip: content-box;
+    border: 2px solid transparent;
+    border-radius: 9999px;
+  }
+  *::-webkit-scrollbar-thumb:hover {
+    background: #ff9d66;
+    background-clip: content-box;
+  }
+  .scroll-dark::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.28);
+    background-clip: content-box;
+  }
+}

@@ -20,7 +20,7 @@ const data: DashboardData = {
     { label: "New sale", icon: "sales", perm: "sales:view" },
     { label: "Create invoice", icon: "finance", perm: "finance:receivables" },
     { label: "Record payment", icon: "check", perm: "finance:receivables" },
-    { label: "Create PO", icon: "cart", perm: "purchasing:view" },
+    { label: "Create PO", icon: "cart", perm: "purchasing:create", href: "/dashboard/purchasing" },
     { label: "Add product", icon: "inventory", perm: "inventory:manage", href: "/inventory" },
     { label: "Check stock", icon: "inventory", perm: "stock:low", href: "/inventory" },
   ],
