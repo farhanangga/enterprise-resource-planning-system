@@ -29,13 +29,13 @@ const config: ShellConfig = {
   permissions: {
     owner: [
       "dashboard:view", "inventory:view", "inventory:manage", "inventory:adjust", "inventory:cost",
-      "sales:view", "purchasing:view", "purchasing:create", "purchasing:manage", "purchasing:receive", "purchasing:payment", "purchasing:all", "finance:view", "hr:view", "hr:manage", "hr:payroll", "reports:view", "team:manage", "settings:view",
+      "sales:view", "purchasing:view", "purchasing:create", "purchasing:manage", "purchasing:receive", "purchasing:payment", "purchasing:all", "finance:view", "hr:view", "hr:manage", "hr:payroll", "reports:view", "team:manage", "settings:view", "settings:company",
       "kpi:business", "chart:sales", "finance:receivables", "finance:cashflow", "products:top", "stock:low",
       "orders:pending", "invoices:unpaid", "activity:view", "billing:plan", "onboarding:view",
     ],
     admin: [
       "dashboard:view", "inventory:view", "inventory:manage", "inventory:adjust", "inventory:cost",
-      "sales:view", "purchasing:view", "purchasing:create", "purchasing:manage", "purchasing:receive", "purchasing:payment", "purchasing:all", "finance:view", "hr:view", "hr:manage", "reports:view", "team:manage", "settings:view",
+      "sales:view", "purchasing:view", "purchasing:create", "purchasing:manage", "purchasing:receive", "purchasing:payment", "purchasing:all", "finance:view", "hr:view", "hr:manage", "reports:view", "team:manage", "settings:view", "settings:company",
       "kpi:business", "chart:sales", "finance:receivables", "products:top", "stock:low",
       "orders:pending", "invoices:unpaid", "activity:view", "onboarding:view",
     ],
@@ -66,7 +66,7 @@ const config: ShellConfig = {
   ],
   adminMenu: [
     { label: "Team & Roles", href: "/dashboard/team", icon: "shield", perm: "team:manage", ready: false },
-    { label: "Settings", href: "/dashboard/settings", icon: "settings", perm: "settings:view", ready: false },
+    { label: "Settings", href: "/dashboard/settings", icon: "settings", perm: "settings:view", ready: true },
   ],
 
   notifications: [

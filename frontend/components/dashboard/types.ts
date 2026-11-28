@@ -23,6 +23,7 @@ export type Permission =
   | "reports:view"
   | "team:manage"
   | "settings:view"
+  | "settings:company" // ubah data perusahaan (nama, pajak, prefix invoice)
   // widget dashboard
   | "kpi:business"
   | "kpi:staff"

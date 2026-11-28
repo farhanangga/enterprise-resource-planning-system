@@ -84,15 +84,12 @@ export default function DashboardShell({ data }: { data: DashboardData }) {
         />
 
         <Topbar
-          user={user}
           role={role}
-          roleLabel={data.roleInfo[role].label}
           roles={roles}
           allowRoleSwitch={data.settings.allowRoleSwitch}
           notifications={data.notifications}
           onRoleChange={setRole}
           onMenu={() => setMobileOpen(true)}
-          onSignOut={signOut}
         />
 
         <main className="relative px-4 pb-12 pt-6 sm:px-6 lg:px-8">

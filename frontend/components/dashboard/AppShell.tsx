@@ -73,15 +73,12 @@ export default function AppShell({ config, children }: { config: ShellConfig; ch
           />
 
           <Topbar
-            user={user}
             role={role}
-            roleLabel={config.roleInfo[role].label}
             roles={roles}
             allowRoleSwitch={config.settings.allowRoleSwitch}
             notifications={config.notifications}
             onRoleChange={setRole}
             onMenu={() => setMobileOpen(true)}
-            onSignOut={signOut}
           />
 
           <main className="relative px-4 pb-12 pt-6 sm:px-6 lg:px-8">{children}</main>
